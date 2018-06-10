@@ -1,0 +1,13 @@
+{% extends "compiler/layout.html" %}
+
+{% block content %}
+
+<p>Code</p>
+
+<form name="index" action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input name="submit" type="submit" value="OK">
+</form>
+
+{% endblock %}
