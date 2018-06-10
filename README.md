@@ -9,7 +9,7 @@ budowa i uruchomienie:
 tylko baza danych:
 ```docker-compose up --build db```
 
-[127.0.0.1:8000](127.0.0.1:8000)
+[127.0.0.1:8000/accounts/login/](127.0.0.1:8000/accounts/login/)
 
 podłączenie się do uruchomionego kontenera z konsolą
 ```docker exec -t -i jnp2_front_1 /bin/ash```

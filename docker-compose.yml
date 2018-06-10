@@ -6,10 +6,10 @@ services:
   front:
     build: web/just_run_it
     command: python3 manage.py runserver 0.0.0.0:8000
-    volumes:
-     - type: volume
-       source: mydata
-       target: /just_run_it/just_run_it
+    #volumes:
+    # - type: volume
+    #   source: mydata
+    #   target: /just_run_it/just_run_it
     ports:
      - "8000:8000"
     depends_on:
