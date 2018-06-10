@@ -1,7 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views.generic import ListView
 
+from .models import Submission
 from .forms import SubmissionForm
 
 """ 
@@ -9,22 +13,34 @@ def index(request):
     return render(request, 'compiler/submit_code.html')
 """
 
-def index(request):
-    """User error handling:
-        If given flight does not exist: return 404
-        If flight don't have spare seats: redirect to flight-detail
-        If user is not authenticated: redirect to login page
-        If form is valid: save and return to flight-detail
-        In flight-detail user sees why they can't add reservation
-        or sees new passenger on the list.
-    """
+class Index(LoginRequiredMixin, ListView):
+    model = Submission
+    paginate_by = 10
+
+    def get_queryset(self):
+        new_context = Submission.objects
+
+        new_context = new_context.filter(user=self.request.user)
+
+        return new_context.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(Index, self).get_context_data(**kwargs)
+        #context['filter_source'] = self.request.GET.get('source', 'Warsaw Chopin')
+        return context
+
+
+@login_required
+def submit(request):
     if request.method == 'POST':
+        print("submitting")
         form = SubmissionForm(request.POST)
         if form.is_valid():
             submission = form.save(commit=False)
-            #submission.user = flight_id
+            submission.user = request.user
             submission.save()
-            return HttpResponseRedirect(reverse('index'))
+            print("submission saved")
+            return HttpResponseRedirect(reverse('submit'))
 
     # if a GET (or any other method) we'll create a blank form
     else:

@@ -12,6 +12,7 @@ class Submission(models.Model):
     content = models.TextField('Your source code')
     input = models.TextField()
 
+    status = models.CharField(max_length=30, default='submitted')
     err_code = models.IntegerField('Error code of the program', null=True)
     output = models.TextField('Written to standard output')
     err_output = models.TextField('Written to standard error output')
@@ -21,3 +22,7 @@ class Submission(models.Model):
         if not self.id:
             self.created = timezone.now()
         return super(Submission, self).save(*args, **kwargs)
+
+
+    def __str__(self):
+        return str(self.created.strftime('%H:%M:%S %d.%m.%Y')) + " " + str(self.status) + " " + str(self.err_code)

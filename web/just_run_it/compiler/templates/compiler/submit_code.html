@@ -4,7 +4,7 @@
 
 <p>Code</p>
 
-<form name="index" action="{% url 'index' %}" method="post">
+<form name="index" action="{% url 'submit' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <input name="submit" type="submit" value="OK">
