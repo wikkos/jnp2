@@ -15,5 +15,9 @@ services:
     depends_on:
      - db
 
+  programs:
+    build: web/programs
+    command: python3 manage.py runserver 0.0.0.0:9000
+
 volumes:
   mydata:
