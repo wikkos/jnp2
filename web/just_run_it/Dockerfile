@@ -1,7 +1,7 @@
 FROM python:3.5-alpine
 ENV PYTHONUNBUFFERED 1
-ADD . /web
-WORKDIR /web
+ADD . /just_run_it
+WORKDIR /just_run_it
 
 RUN apk update && \
     apk add --virtual build-deps gcc musl-dev && \
