@@ -6,5 +6,11 @@ budowa i uruchomienie:
 
 ```docker-compose up --build```
 
+tylko baza danych:
+```docker-compose up --build db```
+
 
 [127.0.0.1:8000](127.0.0.1:8000)
+
+podłączenie się do uruchomionego kontenera z konsolą
+```docker exec -t -i container_name /bin/ash```
