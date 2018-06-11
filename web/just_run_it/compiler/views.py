@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+import requests
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView
+from rest_framework import status
+from rest_framework.response import Response
 
 from .models import Submission
 from .forms import SubmissionForm
@@ -12,6 +15,8 @@ from .forms import SubmissionForm
 def index(request):
     return render(request, 'compiler/submit_code.html')
 """
+
+from rest_framework.decorators import api_view
 
 class Index(LoginRequiredMixin, ListView):
     model = Submission
@@ -38,9 +43,19 @@ def submit(request):
         if form.is_valid():
             submission = form.save(commit=False)
             submission.user = request.user
-            #submission.status = Submission.SU
             submission.save()
-            print("submission saved")
+
+            print(request.POST)
+            print(request.user)
+
+            post_data = dict(request.POST)
+            post_data['user'] = request.user.username
+            response = requests.post('http://127.0.0.1:8000/compiler/api/test_submit', data=post_data)
+            print("http sent")
+            content = response.content
+            print(response.status_code)
+            print(content)
+
             return HttpResponseRedirect(reverse('submit'))
 
     # if a GET (or any other method) we'll create a blank form
@@ -48,3 +63,13 @@ def submit(request):
         form = SubmissionForm()
 
     return render(request, 'compiler/submit_code.html', {'form': form})
+
+
+@api_view(['POST'])
+def api_test_submit(request):
+    print("Inside api_test_submit")
+    print(request.POST)
+    print(request.user)
+
+    return HttpResponse(status=201)
+
