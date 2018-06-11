@@ -20,6 +20,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     command: python3 manage.py runserver 0.0.0.0:9000
+    ports:
+      - "9000:9000"
 
   runner:
     build: web/runner
