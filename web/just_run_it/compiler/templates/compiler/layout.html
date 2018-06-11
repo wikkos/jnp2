@@ -5,6 +5,18 @@
         <title>Just run it!</title>
     </head>
     <body>
+
+    {% if user.is_authenticated %}
+        <h3>Logged as: {{user.username}}. <a href="/accounts/logout">Log out</a></h3>
+    {% else %}
+        <h3><a id="login" href="/accounts/login">Log in</a></h3>
+    {% endif %}
+
+    <nav>
+        <a href="{% url 'submit' %}">Submit code</a> |
+        <a href="{% url 'index' %}">Your submissions</a>
+    </nav>
+
     {% block content %}
     {% endblock %}
     </body>

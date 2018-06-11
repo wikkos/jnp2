@@ -6,4 +6,4 @@ from .models import Submission
 class SubmissionForm(ModelForm):
     class Meta:
         model = Submission
-        fields = ['content', 'input']
+        fields = ['content', 'input', 'language']

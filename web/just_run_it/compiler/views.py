@@ -38,6 +38,7 @@ def submit(request):
         if form.is_valid():
             submission = form.save(commit=False)
             submission.user = request.user
+            #submission.status = Submission.SU
             submission.save()
             print("submission saved")
             return HttpResponseRedirect(reverse('submit'))
