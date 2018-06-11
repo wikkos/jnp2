@@ -15,5 +15,15 @@ services:
     depends_on:
      - db
 
+  programs:
+    build: web/programs
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: python3 manage.py runserver 0.0.0.0:9000
+
+  runner:
+    build: web/runner
+    command: python3 run.py
+
 volumes:
   mydata:
