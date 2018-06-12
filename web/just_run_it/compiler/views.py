@@ -1,3 +1,4 @@
+import json
 import time
 
 import pika as pika
@@ -13,6 +14,7 @@ from django.views.generic import ListView
 from rest_framework import status
 from rest_framework.response import Response
 
+from .sub import Sub
 from .models import Submission
 from .forms import SubmissionForm, LoginForm, RegistrationForm
 
@@ -165,3 +167,11 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'register.html', locals())
+
+
+@login_required
+def getprograms(request):
+    response = requests.get('http://programs:9000/get/' + request.user.username + '/')
+    response = json.loads(response)
+    submissions = [Sub(submission) for submission in response]
+    return render(request, 'submissions.html', locals())

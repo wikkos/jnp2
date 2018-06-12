@@ -1,0 +1,26 @@
+{% extends 'template.html' %}
+
+{% block subtitile %}submissions{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <header>
+            <h1>List of all your submissions.</h1>
+        </header>
+    <table class="table table-bordered">
+        {% for submission in response %}
+            <tr>
+                <td>Language: {{ submission.language }}</td>
+                <td>Time executed: {{ submission.timeExecuted }}</td>
+            </tr>
+            <tr>
+                <td>Id: <a href="{% url 'select_submission' submission.id %}">{{ submission.id }}</a></td>
+                <td>Status: {{ submission.status }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}

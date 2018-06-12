@@ -6,7 +6,8 @@ class Execution(models.Model):
     EXECUTED = 1
     FAILED = 2
 
-    username = models.CharField(max_length=100)
-    folderName = models.CharField(max_length=200)
+    userName = models.CharField(max_length=100)
+    folderName = models.CharField(max_length=150)
     timeExecuted = models.DateTimeField()
     status = models.IntegerField()
+    language = models.CharField(max_length=10)

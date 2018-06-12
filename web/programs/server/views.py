@@ -1,11 +1,13 @@
 import datetime
+import json
 import os
 import threading
 from pathlib import Path
 
 import docker
 import time
-from django.http import HttpResponse
+
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
 from .models import Execution
@@ -77,12 +79,20 @@ def submit(request):
         folderName, now = _saveFiles(request)
         now = datetime.datetime.fromtimestamp(now / 1000, tz=datetime.timezone.utc)
         execution = Execution.objects.create(
-            username=request.POST['username'],
+            userName=request.POST['username'],
             folderName=folderName,
             timeExecuted=now,
-            status=Execution.RUNNING
+            status=Execution.RUNNING,
+            language=request.POST['language'],
         )
         threading.Thread(target=_spawnRunner, args=[request, folderName, execution.id]).start()
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=400)
+
+
+def getPrograms(request, username):
+    executions = [Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status')]
+    # print(json.dumps(executions))
+    #return JsonResponse(executions, status=200, safe=False)
+    return HttpResponse(json.dumps(executions), content_type='application/json')
