@@ -1,3 +1,6 @@
+import time
+
+import pika as pika
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
@@ -34,6 +37,8 @@ class Index(LoginRequiredMixin, ListView):
         #context['filter_source'] = self.request.GET.get('source', 'Warsaw Chopin')
         return context
 
+
+
 def submit(request):
     if request.method == 'POST':
         print("submitting")
@@ -43,7 +48,27 @@ def submit(request):
             submission.user = request.user
             submission.save()
 
-            print(request.POST)
+            print("Sending")
+            time.sleep(2)
+
+            ## Publishing message to "exec_results" exchange
+            ## TODO: exchange initialisation in message_broker
+            connection = pika.BlockingConnection(pika.ConnectionParameters(
+                host='message-broker'))
+            channel = connection.channel()
+
+            channel.exchange_declare(exchange='exec_results',
+                                     exchange_type='fanout')
+
+            channel.basic_publish(exchange='exec_results',
+                                  routing_key='',
+                                  body='Hello World!')
+            print(" [x] Sent exec_results message")
+
+            connection.close()
+
+
+            """print(request.POST)
             print(request.user)
 
             post_data = dict(request.POST)
@@ -55,7 +80,7 @@ def submit(request):
             print(response.status_code)
             print(content)
 
-            return HttpResponseRedirect(reverse('submit'))
+            return HttpResponseRedirect(reverse('submit'))"""
 
     # if a GET (or any other method) we'll create a blank form
     else:

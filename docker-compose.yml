@@ -42,6 +42,14 @@ services:
     build: web/runners/runner_python
     command: python3 run.py
 
+  message-broker:
+      image: "rabbitmq:3.6.14-management"
+      ports:
+          - 5672:5672
+          - 15672:15672
+      networks:
+       - just_run_it_net
+
 volumes:
   mydata:
 
