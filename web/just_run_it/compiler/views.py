@@ -49,7 +49,7 @@ def submit(request):
             post_data = dict(request.POST)
             post_data['user'] = request.user.username
             del post_data['csrfmiddlewaretoken']
-            response = requests.post('http://programs:9000/server/submit/', data=post_data)
+            response = requests.post('http://programs:9000/submit/', data=post_data)
             print("http sent")
             content = response.content
             print(response.status_code)
