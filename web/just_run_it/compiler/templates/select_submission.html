@@ -1,0 +1,26 @@
+{% extends 'template.html' %}
+
+{% block subtitile %}execution{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <header>
+            <h1>Execution data:</h1>
+            <ul>
+                <li>ID: {{ exe.id }}</li>
+                <li>Language: {{ exe.language }}</li>
+                <li>Time of execution: {{ exe.timeExecuted }}</li>
+                {% if exe.compilable %}
+                <li>Compiler out: {{ exe.compiler_out }}</li>
+                <li>Compiler err: {{ exe.compiler_err }}</li>
+                <li>Compiler return code: {{ exe.compiler_retcode}}</li>
+                {% endif %}
+                {% if exe.run %}
+                <li>Run out: {{ exe.run_out }}</li>
+                <li>Run err: {{ exe.run_err }}</li>
+                <li>Run return code: {{ exe.run_retcode}}</li>
+                {% endif %}
+            </ul>
+        </header>
+    </div>
+{% endblock %}

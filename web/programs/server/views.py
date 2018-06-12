@@ -7,6 +7,7 @@ from pathlib import Path
 import docker
 import time
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
@@ -97,3 +98,17 @@ def getPrograms(request, username):
         exe['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
     print(executions)
     return HttpResponse(json.dumps(executions), content_type='application/json')
+
+def getProgram(request, id):
+    try:
+        exe = Execution.objects.values('id', 'timeExecuted', 'language', 'folderName').get(id=id)
+    except ObjectDoesNotExist:
+        return HttpResponse(status=400)
+
+    with open(exe['folderName'] + '/output.json', 'r') as file:
+        content = file.read()
+    content = json.loads(content)
+    content['id'] = exe['id']
+    content['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
+    content['language'] = exe['language']
+    return HttpResponse(json.dumps(content), content_type='application/json')

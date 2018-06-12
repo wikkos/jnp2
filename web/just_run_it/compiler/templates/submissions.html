@@ -14,7 +14,7 @@
                 <td>Time executed: {{ submission.timeExecuted }}</td>
             </tr>
             <tr>
-                <td>Id: {{ submission.id }}</td>
+                <td><a href="{% url 'get_program' submission.id %}">ID: {{ submission.id }}</a></td>
                 <td>Status: {{ submission.status }}</td>
             </tr>
             <tr>

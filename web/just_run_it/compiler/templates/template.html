@@ -15,8 +15,8 @@
             </div>
             <ul class="nav navbar-nav">
                 {% if request.user.is_authenticated %}
-                    <li><a href={% url 'index' %}>Menu 1</a></li>
-                    <li><a href={% url 'get_programs' %}>List</a></li>
+                    <li><a href={% url 'submit' %}>New submission</a></li>
+                    <li><a href={% url 'get_programs' %}>All submissions</a></li>
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">

@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from rest_framework import status
 from rest_framework.response import Response
 
-from .sub import Sub
+from .sub import Sub, Exe
 from .models import Submission
 from .forms import SubmissionForm, LoginForm, RegistrationForm
 
@@ -175,3 +175,12 @@ def getPrograms(request):
     response = json.loads(response)
     submissions = [Sub(submission) for submission in response]
     return render(request, 'submissions.html', locals())
+
+
+@login_required
+def getProgram(request, id):
+    response = requests.get('http://programs:9000/get_by_id/' + id + '/').content.decode('utf-8')
+    print("~~~" + response + "~~~")
+    response = json.loads(response)
+    exe = Exe(response)
+    return render(request, 'select_submission.html', locals())
