@@ -93,5 +93,7 @@ def submit(request):
 
 def getPrograms(request, username):
     executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status'))
+    for exe in executions:
+        exe['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
     print(executions)
     return HttpResponse(json.dumps(executions), content_type='application/json')
