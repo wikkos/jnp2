@@ -14,7 +14,11 @@
                 <td>Time executed: {{ submission.timeExecuted }}</td>
             </tr>
             <tr>
+                {% if submission.finished %}
                 <td><a href="{% url 'get_program' submission.id %}">ID: {{ submission.id }}</a></td>
+                {% else %}
+                <td>ID: {{ submission.id }}</td>
+                {% endif %}
                 <td>Status: {{ submission.status }}</td>
             </tr>
             <tr>

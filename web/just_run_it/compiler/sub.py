@@ -13,6 +13,7 @@ class Sub:
         self.language = map['language']
         self.timeExecuted = map['timeExecuted']
         self.status = self.hmm[map['status']]
+        self.finished = map['status'] != 0
 
 
 class Exe:

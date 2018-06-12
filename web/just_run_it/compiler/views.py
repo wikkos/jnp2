@@ -184,3 +184,33 @@ def getProgram(request, id):
     response = json.loads(response)
     exe = Exe(response)
     return render(request, 'select_submission.html', locals())
+
+
+@login_required
+def addProgram(request):
+    if request.method == 'POST':
+        print("submitting")
+        form = SubmissionForm(request.POST)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.user = request.user
+            submission.save()
+            print(request.POST)
+            print(request.user)
+
+            post_data = dict(request.POST)
+            post_data['username'] = request.user.username
+            del post_data['csrfmiddlewaretoken']
+            response = requests.post('http://programs:9000/submit/', data=post_data)
+            print("http sent")
+            content = response.content
+            print(response.status_code)
+            print(content)
+
+            return HttpResponseRedirect(reverse('add_program'))
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = SubmissionForm()
+
+    return render(request, 'submit.html', locals())

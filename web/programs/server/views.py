@@ -35,7 +35,7 @@ def _saveFiles(request):
     path.mkdir(exist_ok=False)
 
     _saveFile(request.POST['content'], folderName + '/file' + languages_map[request.POST['language']]['ext'])
-    _saveFile(request.POST['input'], folderName + '/input')
+    _saveFile(request.POST.get('input', ''), folderName + '/input')
     return folderName, now
 
 
