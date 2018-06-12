@@ -1,7 +1,8 @@
 FROM python:3.5-alpine
 ENV PYTHONUNBUFFERED 1
 
-ADD ../run_template.py /runner/
-ADD ../languages_map.py /runner/
+RUN apk update && \
+    apk add --virtual build-deps gcc musl-dev g++
+
 ADD run.py /runner/
 WORKDIR /runner
