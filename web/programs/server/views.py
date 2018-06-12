@@ -92,7 +92,6 @@ def submit(request):
 
 
 def getPrograms(request, username):
-    executions = [Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status')]
-    # print(json.dumps(executions))
-    #return JsonResponse(executions, status=200, safe=False)
+    executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status'))
+    print(executions)
     return HttpResponse(json.dumps(executions), content_type='application/json')
