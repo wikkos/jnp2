@@ -92,7 +92,7 @@ def submit(request):
 
 
 def getPrograms(request, username):
-    executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status'))
+    executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status', 'language'))
     for exe in executions:
         exe['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
     print(executions)

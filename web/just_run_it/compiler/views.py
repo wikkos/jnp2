@@ -170,8 +170,8 @@ def register(request):
 
 
 @login_required
-def getprograms(request):
-    response = requests.get('http://programs:9000/get/' + request.user.username + '/')
+def getPrograms(request):
+    response = requests.get('http://programs:9000/get/' + request.user.username + '/').content.decode('utf-8')
     response = json.loads(response)
     submissions = [Sub(submission) for submission in response]
     return render(request, 'submissions.html', locals())
