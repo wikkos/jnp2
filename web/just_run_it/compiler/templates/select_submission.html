@@ -11,9 +11,9 @@
                 <li>Language: {{ exe.language }}</li>
                 <li>Time of execution: {{ exe.timeExecuted }}</li>
                 {% if exe.compilable %}
-                <li>Compiler out: {{ exe.compiler_out }}</li>
-                <li>Compiler err: {{ exe.compiler_err }}</li>
-                <li>Compiler return code: {{ exe.compiler_retcode}}</li>
+                <li>Compiler out: {{ exe.compile_out }}</li>
+                <li>Compiler err: {{ exe.compile_err }}</li>
+                <li>Compiler return code: {{ exe.compile_retcode}}</li>
                 {% endif %}
                 {% if exe.run %}
                 <li>Run out: {{ exe.run_out }}</li>
