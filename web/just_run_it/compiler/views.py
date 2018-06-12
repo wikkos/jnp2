@@ -34,8 +34,6 @@ class Index(LoginRequiredMixin, ListView):
         #context['filter_source'] = self.request.GET.get('source', 'Warsaw Chopin')
         return context
 
-
-@login_required
 def submit(request):
     if request.method == 'POST':
         print("submitting")
@@ -50,7 +48,8 @@ def submit(request):
 
             post_data = dict(request.POST)
             post_data['user'] = request.user.username
-            response = requests.post('http://127.0.0.1:8000/compiler/api/test_submit', data=post_data)
+            del post_data['csrfmiddlewaretoken']
+            response = requests.post('http://programs:9000/server/submit/', data=post_data)
             print("http sent")
             content = response.content
             print(response.status_code)

@@ -4,8 +4,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView
+from rest_framework.decorators import api_view
 
-from web.programs.server.forms import SendCodeForm
+from .forms import SendCodeForm
 
 
 def send(request):
@@ -13,3 +14,12 @@ def send(request):
         form = SendCodeForm(request.method)
         # TODO spawn new docker container
     return render(request, "")
+
+
+@api_view(['POST'])
+def submit(request):
+    print("Inside submit")
+    print(request.POST)
+    print(request.user)
+
+    return HttpResponse(status=201)

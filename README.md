@@ -6,6 +6,9 @@ budowa i uruchomienie:
 
 ```docker-compose build && docker-compose up -d db && docker-compose up front```
 
+postawienie sieci:
+```docker network create just_run_it_net```
+
 tylko baza danych:
 ```docker-compose up --build db```
 
