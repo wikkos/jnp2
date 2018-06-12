@@ -6,6 +6,7 @@ RUN apk update && \
     apk add postgresql-dev && \
     apk add docker
 
+ADD ../runners/languages_map.py /programs/
 ADD requirements.txt /programs/
 RUN pip install -r /programs/requirements.txt
 ADD . /programs

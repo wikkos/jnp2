@@ -29,8 +29,17 @@ services:
     networks:
      - just_run_it_net
 
-  runner:
-    build: web/runner
+#  TODO these runners require proper images (ubuntu maybe)
+#  runner_c:
+#    build: web/runners/runner_c
+#    command: python3 run.py
+#
+#  runner_cpp:
+#    build: web/runners/runner_cpp
+#    command: python3 run.py
+
+  runner_python:
+    build: web/runners/runner_python
     command: python3 run.py
 
 volumes:

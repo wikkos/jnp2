@@ -4,5 +4,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update && \
     apk add gcc
 
-ADD runner/run.py /runner/
+ADD ../run_template.py /runner/
+ADD ../languages_map.py /runner/
+ADD run.py /runner/
 WORKDIR /runner

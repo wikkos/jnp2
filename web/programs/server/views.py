@@ -3,61 +3,57 @@ import threading
 from pathlib import Path
 
 import docker
+import time
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView
 from rest_framework.decorators import api_view
 
-from .forms import SendCodeForm
+from .languages_map import languages_map
+from .forms import SubmitForm
 from django.views.decorators.csrf import csrf_exempt
 
-from .forms import SendCodeForm
+from .forms import SubmitForm
 
+def _saveFile(content, fileName):
+    path = Path(fileName)
+    path.touch()
+    with path.open('w') as file:
+        file.write(content)
 
-def _spawn_runner():
+def _saveFiles(request):
+    now = round(time.time() * 1000) # time in ms
+
+    folderName = 'files/' + request.POST['username']
+    path = Path(folderName)
+    path.mkdir(exist_ok=True)
+
+    folderName += '/' + str(now)
+    path = Path(folderName)
+    path.mkdir(exist_ok=False)
+
+    _saveFile(request.POST['content'], folderName + '/file' + languages_map[request.POST['language']]['ext'])
+    _saveFile(request.POST['input'], folderName + '/input')
+    return folderName
+
+def _spawnRunner(request, folderName):
     client = docker.from_env()
-    container = client.containers.run('jnp2_runner', 'python run.py', detach=True)
-    os.system("docker cp file.c " + container.name + ":/runner")
+    container = client.containers.run(languages_map[request.POST['language']]['image'], 'python run.py', detach=True)
+    os.system("docker cp file" + languages_map[request.POST['language']]['ext'] + ' ' + container.name + ":/runner")
     os.system("docker cp input " + container.name + ":/runner")
 
     try:
-        container.wait(timeout=60)
+        container.wait(timeout=300)
+        response = container.logs()
+        print("runner exited correctly")
+        print(response)
+        _saveFile(response, folderName + '/output.json')
     except:
+        print("runner failed to exit on time")
         container.kill()
 
-    response = container.logs()
     container.remove()
-
-    print(response)
-    #try:
-    #    response = json.loads(response)
-    #    print(response)
-    #except:
-    #    print("failed to parse json")
-
-@csrf_exempt
-def send(request):
-    if request.method == "POST":
-        form = SendCodeForm(request.POST)
-        if form.is_valid():
-            filePath = Path("file.c")
-            filePath.touch()
-            file = open("file.c", "w")
-            file.write(request.POST['code'])
-            file.close()
-
-            filePath = Path("input")
-            filePath.touch()
-            file = open("input", "w")
-            file.write(request.POST['input'])
-            file.close()
-
-            threading.Thread(target=_spawn_runner).start()
-
-    # TODO for some reason this template is not loading properly
-    return render(request, 'ok.html')
-
 
 @api_view(['POST'])
 def submit(request):
@@ -65,4 +61,11 @@ def submit(request):
     print(request.POST)
     print(request.user)
 
-    return HttpResponse(status=201)
+    form = SubmitForm(request.POST)
+    if form.is_valid():
+        folderName = _saveFiles(request)
+        # TODO add to database
+        threading.Thread(target=_spawnRunner, args=[request, folderName]).start()
+        return HttpResponse(status=201)
+    else:
+        return HttpResponse(status=400)

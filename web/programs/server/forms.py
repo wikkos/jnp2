@@ -1,6 +1,8 @@
 from django import forms
 
 
-class SendCodeForm(forms.Form):
-    code = forms.CharField()
+class SubmitForm(forms.Form):
+    language = forms.CharField()
+    content = forms.CharField()
     input = forms.CharField()
+    username = forms.CharField()
