@@ -26,13 +26,15 @@ SECRET_KEY = '4w!$dndpq!$f1^1qet0al+h#3m$4hg3l86y&27l6f&l#xw3b=s'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'programs'
+    'programs',
+    'localhost',
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'server',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

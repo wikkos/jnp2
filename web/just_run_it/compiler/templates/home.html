@@ -1,0 +1,21 @@
+{% extends 'template.html' %}
+
+{% block subtitile %}homepage{% endblock %}
+
+{% block back_home %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <header>
+            <h1>Welcome on JUST RUN IT website. You can post your code and input here, and we will execute it.</h1>
+        </header>
+        <section>
+            {% if request.user.is_authenticated %}
+            <p>You are logged in as {{ request.user.username }}, you can use our service now.</p>
+        {% else %}
+            <p>To continue, please log in or create new account.</p>
+        {% endif %}
+        </section>
+    </div>
+{% endblock %}

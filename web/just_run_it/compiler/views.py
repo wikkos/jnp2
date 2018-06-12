@@ -1,10 +1,12 @@
 import time
 
 import pika as pika
+from django.contrib.auth import authenticate, login as login_user
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
-from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView
@@ -12,7 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from .models import Submission
-from .forms import SubmissionForm
+from .forms import SubmissionForm, LoginForm, RegistrationForm
 
 """ 
 def index(request):
@@ -129,3 +131,37 @@ def api_test_submit(request):
 
     return HttpResponse(status=201)
 
+
+def home(request):
+    return render(request, 'home.html')
+
+
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=request.POST['username'], password=request.POST['password'])
+            if user is not None:
+                login_user(request, user)
+                return redirect('home')
+            else:
+                wrong_username = True
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', locals())
+
+
+def logout(request):
+    return render(request, 'logout.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
+            login_user(request, user)
+            return redirect('home')
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', locals())

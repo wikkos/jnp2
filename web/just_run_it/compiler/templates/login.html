@@ -1,0 +1,12 @@
+{% extends 'log_reg_template.html' %}
+
+{% block subtitile %}login{% endblock %}
+
+{% block form_header %}
+    <h1>Log in to your account.</h1>
+    {% if wrong_username %}
+        <p>Username or password is incorrect!</p>
+    {% endif %}
+{% endblock %}
+
+{% block form_button %}Log in{% endblock %}
