@@ -56,7 +56,6 @@ def submit(request):
             connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host='message-broker'))
             channel = connection.channel()
-
             channel.exchange_declare(exchange='exec_results',
                                      exchange_type='fanout')
 
@@ -66,6 +65,39 @@ def submit(request):
             print(" [x] Sent exec_results message")
 
             connection.close()
+
+
+            time.sleep(2)
+            connection = pika.BlockingConnection(pika.ConnectionParameters(
+                host='message-broker'))
+            channel = connection.channel()
+
+            channel.exchange_declare(exchange='exec_results',
+                                     exchange_type='fanout')
+
+            result = channel.queue_declare(exclusive=True)
+            queue_name = result.method.queue
+
+            channel.queue_bind(exchange='exec_results',
+                               queue=queue_name)
+
+            def callback(ch, method, properties, body):
+                print("Received!")
+                print(" [x] %r" % body)
+
+            channel.basic_consume(callback,
+                                  queue=queue_name,
+                                  no_ack=True)
+
+
+            channel.basic_publish(exchange='exec_results',
+                                  routing_key='',
+                                  body='Hello World!')
+
+
+            print("Listening")
+            channel.start_consuming()
+
 
 
             """print(request.POST)
