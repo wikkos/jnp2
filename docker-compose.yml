@@ -1,7 +1,10 @@
 version: '3.2'
+
 services:
-  db:
+  front_db:
     image: postgres
+    volumes:
+      - "front_db:/var/lib/postgresql/data"
     networks:
      - just_run_it_net
 
@@ -15,9 +18,16 @@ services:
     ports:
      - "8000:8000"
     depends_on:
-     - db
+     - front_db
     networks:
      - just_run_it_net
+
+  programs_db:
+    image: postgres
+    volumes:
+      - "programs_db:/var/lib/postgresql/data"
+    networks:
+      - just_run_it_net
 
   programs:
     build: web/programs
@@ -26,6 +36,8 @@ services:
     command: python3 manage.py runserver 0.0.0.0:9000
     ports:
      - "9000:9000"
+    depends_on:
+      - programs_db
     networks:
      - just_run_it_net
 
@@ -50,7 +62,8 @@ services:
      - just_run_it_net
 
 volumes:
-  mydata:
+  front_db:
+  programs_db:
 
 networks:
   just_run_it_net:
