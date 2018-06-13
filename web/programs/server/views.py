@@ -77,7 +77,7 @@ def _spawnRunner(request, folderName, executionId):
 
     channel.basic_publish(exchange='exec_results',
                           routing_key='',
-                          body=str(Execution.objects.filter(id=executionId)[0].sid))
+                          body=str(Execution.objects.get(id=executionId).sid))
     print(" [x] Sent exec_results message")
 
     connection.close()

@@ -1,12 +1,14 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 
-from .models import Submission
+# from .models import Submission
 
 settings.configure()
 
 import pika
 import time
-from celery import Celery
+from celery import Celery, shared_task
 
 #local testing: @127.0.0.1
 app = Celery('tasks', broker='amqp://guest:guest@message-broker:5672//')
@@ -20,6 +22,7 @@ def setup_periodic_tasks(sender, **kwargs):
     #sender.add_periodic_task(2.0, test.s(), name='add every 10')
 
 @app.task
+@shared_task
 def test():
     print("starting update task")
     connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -39,7 +42,7 @@ def test():
         print("Received!")
         print(" [x] %r" % body)
         sid = int(body)
-        Submission.objects.get(id=sid).update(status=Submission.OK)
+        #Submission.objects.get(id=sid).update(status=Submission.OK)
         print("Finished callback")
 
     channel.basic_consume(callback,

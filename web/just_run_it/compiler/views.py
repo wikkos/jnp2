@@ -65,9 +65,9 @@ def submit(request):
             channel.exchange_declare(exchange='exec_results',
                                      exchange_type='fanout')
 
-            channel.basic_publish(exchange='exec_results',
-                                  routing_key='',
-                                  body=str(submission.id))
+            # channel.basic_publish(exchange='exec_results',
+            #                       routing_key='',
+            #                       body=str(submission.id))
             print(" [x] Sent exec_results message")
 
             connection.close()
