@@ -63,6 +63,10 @@ def start(language):
         execute(data, language, 'compile')
         if data['compile-retcode'] == 0:
             execute(data, language, 'run')
+        else:
+            data['run-out'] = ""
+            data['run-out'] = ""
+            data['run-retcode'] = -1
     else:
         execute(data, language, 'run')
 

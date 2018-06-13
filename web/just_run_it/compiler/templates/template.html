@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Just run it! - {% block subtitile %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+              crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href={% url 'home' %}>~Just run it!~</a>
+            </div>
+            <ul class="nav navbar-nav">
+                {% if request.user.is_authenticated %}
+                    <li><a href={% url 'add_program' %}>New submission</a></li>
+                    <li><a href={% url 'get_programs' %}>All submissions</a></li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if not request.user.is_authenticated %}
+                    <li><a href={% url 'register' %}><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                    <li><a href={% url 'login' %}><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+                {% else %}
+                    <li><a href={% url 'logout' %}><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

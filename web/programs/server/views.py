@@ -1,11 +1,14 @@
 import datetime
+import json
 import os
 import threading
 from pathlib import Path
 
 import docker
 import time
-from django.http import HttpResponse
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
 from .models import Execution
@@ -32,7 +35,7 @@ def _saveFiles(request):
     path.mkdir(exist_ok=False)
 
     _saveFile(request.POST['content'], folderName + '/file' + languages_map[request.POST['language']]['ext'])
-    _saveFile(request.POST['input'], folderName + '/input')
+    _saveFile(request.POST.get('input', ''), folderName + '/input')
     return folderName, now
 
 
@@ -77,12 +80,35 @@ def submit(request):
         folderName, now = _saveFiles(request)
         now = datetime.datetime.fromtimestamp(now / 1000, tz=datetime.timezone.utc)
         execution = Execution.objects.create(
-            username=request.POST['username'],
+            userName=request.POST['username'],
             folderName=folderName,
             timeExecuted=now,
-            status=Execution.RUNNING
+            status=Execution.RUNNING,
+            language=request.POST['language'],
         )
         threading.Thread(target=_spawnRunner, args=[request, folderName, execution.id]).start()
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=400)
+
+
+def getPrograms(request, username):
+    executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status', 'language'))
+    for exe in executions:
+        exe['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
+    print(executions)
+    return HttpResponse(json.dumps(executions), content_type='application/json')
+
+def getProgram(request, id):
+    try:
+        exe = Execution.objects.values('id', 'timeExecuted', 'language', 'folderName').get(id=id)
+    except ObjectDoesNotExist:
+        return HttpResponse(status=400)
+
+    with open(exe['folderName'] + '/output.json', 'r') as file:
+        content = file.read()
+    content = json.loads(content)
+    content['id'] = exe['id']
+    content['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
+    content['language'] = exe['language']
+    return HttpResponse(json.dumps(content), content_type='application/json')

@@ -28,7 +28,7 @@ class Submission(models.Model):
     user = models.ForeignKey(User, verbose_name='author of the source code', on_delete=models.CASCADE)
 
     content = models.TextField('Your source code')
-    input = models.TextField()
+    input = models.TextField(blank=True)
     language = models.CharField(max_length=10,
                                 choices=LANGUAGES,
                                 default=C)
