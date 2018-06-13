@@ -8,7 +8,7 @@
             <h1>List of all your submissions.</h1>
         </header>
     <table class="table table-bordered">
-        {% for submission in response %}
+        {% for submission in submissions %}
             <tr>
                 <td>Language: {{ submission.language }}</td>
                 <td>Time executed: {{ submission.timeExecuted }}</td>
