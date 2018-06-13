@@ -15,6 +15,8 @@ from .models import Execution
 from .languages_map import languages_map
 from .forms import SubmitForm
 
+import pika as pika
+
 
 def _saveFile(content, fileName):
     path = Path(fileName)
@@ -66,6 +68,19 @@ def _spawnRunner(request, folderName, executionId):
         Execution.objects.filter(id=executionId).update(status=Execution.FAILED)
 
     # TODO add message on RabbitMQ
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='message-broker'))
+    channel = connection.channel()
+    channel.exchange_declare(exchange='exec_results',
+                             exchange_type='fanout')
+
+    channel.basic_publish(exchange='exec_results',
+                          routing_key='',
+                          body=str(Execution.objects.filter(id=executionId)[0].sid))
+    print(" [x] Sent exec_results message")
+
+    connection.close()
+
     container.remove()
 
 
@@ -85,6 +100,7 @@ def submit(request):
             timeExecuted=now,
             status=Execution.RUNNING,
             language=request.POST['language'],
+            sid=request.POST['id']
         )
         threading.Thread(target=_spawnRunner, args=[request, folderName, execution.id]).start()
         return HttpResponse(status=201)

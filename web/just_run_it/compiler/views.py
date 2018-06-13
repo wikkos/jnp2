@@ -14,6 +14,7 @@ from django.views.generic import ListView
 from rest_framework import status
 from rest_framework.response import Response
 
+
 from .sub import Sub, Exe
 from .models import Submission
 from .forms import SubmissionForm, LoginForm, RegistrationForm
@@ -200,6 +201,7 @@ def addProgram(request):
 
             post_data = dict(request.POST)
             post_data['username'] = request.user.username
+            post_data['id'] = submission.id
             del post_data['csrfmiddlewaretoken']
             response = requests.post('http://programs:9000/submit/', data=post_data)
             print("http sent")
