@@ -20,87 +20,8 @@ from .sub import Sub, Exe
 from .models import Submission
 from .forms import SubmissionForm, LoginForm, RegistrationForm
 
-""" 
-def index(request):
-    return render(request, 'compiler/submit_code.html')
-"""
-
 from rest_framework.decorators import api_view
 
-class Index(LoginRequiredMixin, ListView):
-    model = Submission
-    paginate_by = 10
-
-    def get_queryset(self):
-        new_context = Submission.objects
-
-        new_context = new_context.filter(user=self.request.user)
-
-        return new_context.all()
-
-    def get_context_data(self, **kwargs):
-        context = super(Index, self).get_context_data(**kwargs)
-        #context['filter_source'] = self.request.GET.get('source', 'Warsaw Chopin')
-        return context
-
-
-
-def submit(request):
-    if request.method == 'POST':
-        print("submitting")
-        form = SubmissionForm(request.POST)
-        if form.is_valid():
-            submission = form.save(commit=False)
-            submission.user = request.user
-            submission.save()
-
-            print("Sending")
-            time.sleep(2)
-
-            ## Publishing message to "exec_results" exchange
-            ## TODO: exchange initialisation in message_broker
-            connection = pika.BlockingConnection(pika.ConnectionParameters(
-                host='message-broker'))
-            channel = connection.channel()
-            channel.exchange_declare(exchange='exec_results',
-                                     exchange_type='fanout')
-
-            # channel.basic_publish(exchange='exec_results',
-            #                       routing_key='',
-            #                       body=str(submission.id))
-            print(" [x] Sent exec_results message")
-
-            connection.close()
-
-
-            """print(request.POST)
-            print(request.user)
-
-            post_data = dict(request.POST)
-            post_data['user'] = request.user.username
-            del post_data['csrfmiddlewaretoken']
-            response = requests.post('http://programs:9000/submit/', data=post_data)
-            print("http sent")
-            content = response.content
-            print(response.status_code)
-            print(content)
-
-            return HttpResponseRedirect(reverse('submit'))"""
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = SubmissionForm()
-
-    return render(request, 'compiler/submit_code.html', {'form': form})
-
-
-@api_view(['POST'])
-def api_test_submit(request):
-    print("Inside api_test_submit")
-    print(request.POST)
-    print(request.user)
-
-    return HttpResponse(status=201)
 
 @api_view()
 def api_get_done_count(request, login):
@@ -111,6 +32,7 @@ def api_get_done_count(request, login):
     data['count_all'] = len(Submission.objects.all().filter(user=user))
     #json.dumps(data, safe=False)
     return JsonResponse(data)
+
 
 def home(request):
     return render(request, 'home.html')
@@ -158,7 +80,6 @@ def getPrograms(request):
 @login_required
 def getProgram(request, id):
     response = requests.get('http://programs:9000/get_by_id/' + id + '/').content.decode('utf-8')
-    print("~~~" + response + "~~~")
     response = json.loads(response)
     exe = Exe(response)
     return render(request, 'select_submission.html', locals())
@@ -174,7 +95,6 @@ def addProgram(request):
             submission.user = request.user
             submission.save()
             print(request.POST)
-            print(request.user)
 
             post_data = dict(request.POST)
             post_data['username'] = request.user.username
@@ -183,13 +103,9 @@ def addProgram(request):
             response = requests.post('http://programs:9000/submit/', data=post_data)
             print("http sent")
             content = response.content
-            print(response.status_code)
-            print(content)
-
             return HttpResponseRedirect(reverse('add_program'))
-
-    # if a GET (or any other method) we'll create a blank form
     else:
+        # if a GET (or any other method) we'll create a blank form
         form = SubmissionForm()
 
     return render(request, 'submit.html', locals())

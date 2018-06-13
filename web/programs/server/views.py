@@ -57,7 +57,6 @@ def _spawnRunner(request, folderName, executionId):
         container.wait(timeout=300)
         response = container.logs().decode('utf-8')
         print("runner exited correctly")
-        print(response)
         _saveFile(response, folderName + '/output.json')
         Execution.objects.filter(id=executionId).update(status=Execution.EXECUTED)
     except:
@@ -68,7 +67,7 @@ def _spawnRunner(request, folderName, executionId):
             pass
         Execution.objects.filter(id=executionId).update(status=Execution.FAILED)
 
-    # TODO add message on RabbitMQ
+    # Wiadomości trafiają do Exchange (można to zobaczyć z panelu RabbitMQ
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='message-broker'))
     channel = connection.channel()
@@ -79,7 +78,6 @@ def _spawnRunner(request, folderName, executionId):
                           routing_key='',
                           body=str(Execution.objects.get(id=executionId).sid))
     print(" [x] Sent exec_results message")
-
     connection.close()
 
     container.remove()
@@ -113,7 +111,6 @@ def getPrograms(request, username):
     executions = list(Execution.objects.filter(userName=username).values('id', 'timeExecuted', 'status', 'language'))
     for exe in executions:
         exe['timeExecuted'] = exe['timeExecuted'].strftime('%Y-%m-%d %H:%M:%S')
-    print(executions)
     return HttpResponse(json.dumps(executions), content_type='application/json')
 
 def getProgram(request, id):

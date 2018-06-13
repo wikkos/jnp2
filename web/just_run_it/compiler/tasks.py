@@ -19,7 +19,6 @@ print("INSIDE TASKS")
 def setup_periodic_tasks(sender, **kwargs):
     print("periodic")
     test.delay()
-    #sender.add_periodic_task(2.0, test.s(), name='add every 10')
 
 @app.task
 @shared_task
@@ -42,13 +41,14 @@ def test():
         print("Received!")
         print(" [x] %r" % body)
         sid = int(body)
-        #Submission.objects.get(id=sid).update(status=Submission.OK)
+        # Celery ma problem z zaimportowaniem Submission
+        # Submission.objects.get(id=sid).update(status=Submission.OK)
         print("Finished callback")
 
     channel.basic_consume(callback,
                           queue=queue_name,
                           no_ack=True)
-    print("Listeningg")
+    print("Listening")
     while True:
         print("Consuming", flush=True)
         channel.start_consuming()

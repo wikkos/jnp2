@@ -7,6 +7,8 @@ from django.db import models
 from django.utils import timezone
 
 
+# używane tylko przez api_get_done_count
+# dodanie websocketów pozwoliłoby nie trzymać tej encji w bazie danych
 class Submission(models.Model):
     C = 'C'
     CPP17 = 'CPP17'

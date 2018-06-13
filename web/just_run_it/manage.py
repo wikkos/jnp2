@@ -3,7 +3,6 @@ import os
 import sys
 
 if __name__ == "__main__":
-    #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "just_run_it.settings")
     os.environ['DJANGO_SETTINGS_MODULE'] = 'just_run_it.settings'
     try:
         from django.core.management import execute_from_command_line
