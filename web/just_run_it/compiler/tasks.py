@@ -1,12 +1,12 @@
 from django.conf import settings
+
+from .models import Submission
+
 settings.configure()
 
 import pika
 import time
 from celery import Celery
-
-#from compiler.models import Submission
-
 
 #local testing: @127.0.0.1
 app = Celery('tasks', broker='amqp://guest:guest@message-broker:5672//')
@@ -16,8 +16,8 @@ print("INSIDE TASKS")
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     print("periodic")
-    #test.delay()
-    sender.add_periodic_task(2.0, test.s(), name='add every 10')
+    test.delay()
+    #sender.add_periodic_task(2.0, test.s(), name='add every 10')
 
 @app.task
 def test():
@@ -39,13 +39,13 @@ def test():
         print("Received!")
         print(" [x] %r" % body)
         sid = int(body)
-        #s = Submission.get(id=sid)
-        #s.status = Submission.OK
-        #s.save()
-        #update local db
+        Submission.objects.get(id=sid).update(status=Submission.OK)
+        print("Finished callback")
 
     channel.basic_consume(callback,
                           queue=queue_name,
                           no_ack=True)
-    print("Listening")
-    channel.start_consuming()
+    print("Listeningg")
+    while True:
+        print("Consuming", flush=True)
+        channel.start_consuming()
