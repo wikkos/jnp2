@@ -9,6 +9,7 @@ http://localhost:8000/
 
 RabbitMQ:
 http://localhost:15672/#/
+
 login: guest
 password: guest
 
