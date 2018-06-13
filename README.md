@@ -1,8 +1,8 @@
 start application:
-```./run.sh```
+```$./run.sh```
 
 stop application:
-```docker-compose down```
+```$docker-compose down```
 
 Application works on:
 http://localhost:8000/
@@ -15,23 +15,16 @@ password: guest
 
 celery is currently not working :(
 
-to execute:
-```
-docker exec -i -t jnp2_front_1 /bin/ash
-cd compiler
-celery -A tasks worker --loglevel=info -b message-broker
-```
-
 start celery worker:
 ```
-docker exec -i -t jnp2_front_1 /bin/ash
-cd compiler
-celery -A tasks worker --loglevel=info -b message-broker
+$docker exec -i -t jnp2_front_1 /bin/ash
+$cd compiler
+$celery -A tasks worker --loglevel=info -b message-broker
 ```
 
 start celery beat:
 ```
-docker exec -i -t jnp2_front_1 /bin/ash
-cd compiler
-celery -A tasks beat
+$docker exec -i -t jnp2_front_1 /bin/ash
+$cd compiler
+$celery -A tasks beat
 ```
