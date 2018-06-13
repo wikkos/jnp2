@@ -4,12 +4,14 @@ import pika as pika
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
+from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.generic import ListView
 from rest_framework import status
 from rest_framework.response import Response
+import json
 
 from .models import Submission
 from .forms import SubmissionForm
@@ -61,43 +63,10 @@ def submit(request):
 
             channel.basic_publish(exchange='exec_results',
                                   routing_key='',
-                                  body='Hello World!')
+                                  body=str(submission.id))
             print(" [x] Sent exec_results message")
 
             connection.close()
-
-
-            time.sleep(2)
-            connection = pika.BlockingConnection(pika.ConnectionParameters(
-                host='message-broker'))
-            channel = connection.channel()
-
-            channel.exchange_declare(exchange='exec_results',
-                                     exchange_type='fanout')
-
-            result = channel.queue_declare(exclusive=True)
-            queue_name = result.method.queue
-
-            channel.queue_bind(exchange='exec_results',
-                               queue=queue_name)
-
-            def callback(ch, method, properties, body):
-                print("Received!")
-                print(" [x] %r" % body)
-
-            channel.basic_consume(callback,
-                                  queue=queue_name,
-                                  no_ack=True)
-
-
-            channel.basic_publish(exchange='exec_results',
-                                  routing_key='',
-                                  body='Hello World!')
-
-
-            print("Listening")
-            channel.start_consuming()
-
 
 
             """print(request.POST)
@@ -128,4 +97,15 @@ def api_test_submit(request):
     print(request.user)
 
     return HttpResponse(status=201)
+
+
+@api_view()
+def api_get_done_count(request, login):
+    print("got request from: " + str(login))
+    user = User.objects.all().filter(username=login)[0]
+    data = dict()
+    data['count'] = len(Submission.objects.all().filter(user=user).filter(status=Submission.OK))
+    data['count_all'] = len(Submission.objects.all().filter(user=user))
+    #json.dumps(data, safe=False)
+    return JsonResponse(data)
 
