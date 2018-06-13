@@ -1,9 +1,3 @@
-start celery worker:
-```celery -A tasks worker --loglevel=info -b message-broker```
-
-start celery beat:
-```celery -A tasks beat```
-
 start application:
 ```./run.sh```
 
@@ -17,3 +11,27 @@ RabbitMQ:
 http://localhost:15672/#/
 login: guest
 password: guest
+
+
+celery is currently not working :(
+
+to execute:
+```
+docker exec -i -t jnp2_front_1 /bin/ash
+cd compiler
+celery -A tasks worker --loglevel=info -b message-broker
+```
+
+start celery worker:
+```
+docker exec -i -t jnp2_front_1 /bin/ash
+cd compiler
+celery -A tasks worker --loglevel=info -b message-broker
+```
+
+start celery beat:
+```
+docker exec -i -t jnp2_front_1 /bin/ash
+cd compiler
+celery -A tasks beat
+```
