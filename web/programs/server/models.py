@@ -11,4 +11,4 @@ class Execution(models.Model):
     timeExecuted = models.DateTimeField()
     status = models.IntegerField()
     language = models.CharField(max_length=10)
-    sid = models.IntegerField
+    sid = models.IntegerField()

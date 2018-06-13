@@ -33,6 +33,7 @@ services:
     build: web/programs
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock"
+     - "program_files:/programs/files"
     command: python3 manage.py runserver 0.0.0.0:9000
     ports:
      - "9000:9000"
@@ -64,6 +65,7 @@ services:
 volumes:
   front_db:
   programs_db:
+  program_files:
 
 networks:
   just_run_it_net:
