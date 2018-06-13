@@ -7,7 +7,7 @@
     <body>
 
     {% if user.is_authenticated %}
-        <h3>Logged as: {{user.username}}. <a href="/accounts/logout">Log out</a></h3>
+    <h3>Logged as: <span id="username">{{user.username}}</span>. <a href="/accounts/logout">Log out</a></h3>
     {% else %}
         <h3><a id="login" href="/accounts/login">Log in</a></h3>
     {% endif %}
@@ -19,5 +19,8 @@
 
     {% block content %}
     {% endblock %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="../../static/updates.js"></script>
     </body>
 </html>

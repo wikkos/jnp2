@@ -48,6 +48,7 @@ def _spawnRunner(request, folderName, executionId):
         'python run.py ' + request.POST['language'],
         detach=True
     )
+    # docker API for python does not support copy operation :(
     os.system('docker cp ' + folderName + '/file' + languages_map[request.POST['language']]['ext'] +
               ' ' + container.name + ':/runner')
     os.system('docker cp ' + folderName + '/input ' + container.name + ':/runner')
