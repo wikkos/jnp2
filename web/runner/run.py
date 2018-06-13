@@ -11,14 +11,14 @@ languages_map = {
         'image' : 'jnp2_runner_c',
         'compilable' : True,
         'compile' : 'gcc -std=c11 file.c -o file',
-        'run' : './file <input',
+        'run' : './file',
     },
     'CPP17' : {
         'ext' : '.cc',
         'image' : 'jnp2_runner_cpp',
         'compilable' : True,
         'compile' : 'g++ -std=c++17 file.cc -o file',
-        'run' : './file <input',
+        'run' : './file',
     },
     'PYTHON3' : {
         'ext' : '.py',
@@ -44,11 +44,19 @@ def checkFilesArePresent(language):
 
 
 def execute(dict, language, command):
+    if command == 'run':
+        input = open('input')
+    else:
+        input = None
     process = subprocess.Popen(
         shlex.split(languages_map[language][command]),
+        stdin=input,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
+    if command == 'run':
+        input.flush()
+        input.close()
     out, err = process.communicate(timeout=90)
     dict[command + '-out'] = out.decode('utf-8')
     dict[command + '-err'] = err.decode('utf-8')
