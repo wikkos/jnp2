@@ -19,3 +19,9 @@ podłączenie się do uruchomionego kontenera z konsolą
 
 koniec:
 ```docker-compose down```
+
+start celery worker:
+```celery -A tasks worker --loglevel=info -b message-broker```
+
+start celery beat:
+```celery -A tasks beat```
